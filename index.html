@@ -15,6 +15,15 @@
         .animate-spin-once {
             animation: spin-once 1s ease-in-out forwards;
         }
+        /* Style for the checkerboard effect to show transparency */
+        .checkerboard {
+            background-image: linear-gradient(45deg, #e5e7eb 25%, transparent 25%), 
+                              linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #e5e7eb 75%), 
+                              linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen p-4 md:p-8 flex flex-col items-center">
@@ -36,7 +45,7 @@
 
     <div class="w-full max-w-4xl bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-4">
+            <div class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">1. Upload Image</label>
                     <input type="file" id="upload" accept="image/*" class="mt-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
@@ -47,11 +56,15 @@
                     <input type="range" id="tolerance" min="0" max="100" value="30" class="mt-2 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
                     <span id="toleranceVal" class="text-xs text-gray-500">Sensitivity: 30</span>
                 </div>
+
+                <div class="pt-2">
+                    <button id="toggleContrastBtn" class="w-full border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all">Toggle Preview Contrast</button>
+                </div>
                 
                 <button id="downloadBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md" disabled>Download PNG</button>
             </div>
 
-            <div class="border-2 border-dashed border-gray-200 rounded-xl p-2 flex items-center justify-center bg-gray-50 min-h-[300px] relative">
+            <div id="canvasContainer" class="border-2 border-dashed border-gray-200 rounded-xl p-2 flex items-center justify-center bg-gray-50 min-h-[300px] relative transition-colors">
                 <canvas id="canvas" class="max-w-full h-auto"></canvas>
             </div>
         </div>
@@ -64,12 +77,15 @@
     <script>
         const upload = document.getElementById('upload');
         const canvas = document.getElementById('canvas');
+        const canvasContainer = document.getElementById('canvasContainer');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         const toleranceInput = document.getElementById('tolerance');
         const toleranceVal = document.getElementById('toleranceVal');
         const downloadBtn = document.getElementById('downloadBtn');
+        const toggleContrastBtn = document.getElementById('toggleContrastBtn');
         
         let originalImage = null;
+        let contrastEnabled = false;
 
         upload.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -92,6 +108,17 @@
         toleranceInput.addEventListener('input', () => {
             toleranceVal.textContent = `Sensitivity: ${toleranceInput.value}`;
             processImage();
+        });
+
+        toggleContrastBtn.addEventListener('click', () => {
+            contrastEnabled = !contrastEnabled;
+            if (contrastEnabled) {
+                canvasContainer.classList.add('bg-slate-800');
+                canvasContainer.classList.remove('bg-gray-50');
+            } else {
+                canvasContainer.classList.remove('bg-slate-800');
+                canvasContainer.classList.add('bg-gray-50');
+            }
         });
 
         function processImage() {
@@ -117,7 +144,7 @@
 
         downloadBtn.addEventListener('click', () => {
             const link = document.createElement('a');
-            link.download = 'dudych-processed-image.png';
+            link.download = 'Dudych-processed-image.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
