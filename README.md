@@ -12,6 +12,9 @@ Fast Download: Export your processed image as a clean, transparent PNG.
 
 Responsive Design: Works seamlessly on desktop and mobile devices.
 
+<img width="3591" height="2547" alt="image" src="https://github.com/user-attachments/assets/88455fe2-35d5-489f-a980-cd3d37bbf20b" />
+
+
 How to Use
 
 Upload: Click the "Upload Image" button and select an image from your device.
